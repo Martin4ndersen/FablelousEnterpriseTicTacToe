@@ -4,30 +4,32 @@ Web-based tic-tac-toe game written in F# and transpiled to JavaScript using [Fab
 
 ## Requirements
 
-* [dotnet SDK](https://www.microsoft.com/net/download/core) 2.0 or higher
-* [node.js](https://nodejs.org) 6.11 or higher
-* A JS package manager: [yarn](https://yarnpkg.com) or [npm](http://npmjs.com/)
-
-> npm comes bundled with node.js, but we recommend to use at least npm 5. If you have npm installed, you can upgrade it by running `npm install -g npm`.
-
-Although is not a Fable requirement, on macOS and Linux you'll need [Mono](http://www.mono-project.com/) for other F# tooling like Paket or editor support.
-
-## Editor
-
-The project can be used by editors compatible with the new .fsproj format, like VS Code + [Ionide](http://ionide.io/), Emacs with [fsharp-mode](https://github.com/fsharp/emacs-fsharp-mode) or [Rider](https://www.jetbrains.com/rider/). **Visual Studio for Mac** is also compatible but in the current version the package auto-restore function conflicts with Paket so you need to disable it: `Preferences > Nuget > General`.
+* [dotnet SDK](https://www.microsoft.com/net/download/core) 2.1 or higher
+* [node.js](https://nodejs.org) with [npm](https://www.npmjs.com/)
+* An F# editor like Visual Studio, Visual Studio Code with [Ionide](http://ionide.io/) or [JetBrains Rider](https://www.jetbrains.com/rider/).
 
 ## Building and running the app
 
-> In the commands below, yarn is the tool of choice. If you want to use npm, just replace `yarn` by `npm` in the commands.
+* Install JS dependencies: `npm install`
+* Start Webpack dev server: `npx webpack-dev-server` or `npm start`
+* After the first compilation is finished, in your browser open: http://localhost:8080/
 
-* Install JS dependencies: `yarn install`
-* **Move to `src` folder**: `cd src`
-* Install F# dependencies: `dotnet restore`
-* Start Fable daemon and [Webpack](https://webpack.js.org/) dev server: `dotnet fable yarn-start`
-* In your browser, open: http://localhost:8080/
+Any modification you do to the F# code will be reflected in the web page after saving.
 
-> `dotnet fable yarn-start` (or `npm-start`) is used to start the Fable daemon and run a script in package.json concurrently. It's a shortcut of `yarn-run [SCRIPT_NAME]`, e.g. `dotnet fable yarn-run start`.
+## Project structure
 
-If you are using VS Code + [Ionide](http://ionide.io/), you can also use the key combination: Ctrl+Shift+B (Cmd+Shift+B on macOS) instead of typing the `dotnet fable yarn-start` command. This also has the advantage that Fable-specific errors will be highlighted in the editor along with other F# errors.
+### npm
 
-Any modification you do to the F# code will be reflected in the web page after saving. When you want to output the JS code to disk, run `dotnet fable yarn-build` and you'll get a minified JS bundle in the `public` folder.
+JS dependencies are declared in `package.json`, while `package-lock.json` is a lock file automatically generated.
+
+### Webpack
+
+[Webpack](https://webpack.js.org) is a JS bundler with extensions, like a static dev server that enables hot reloading on code changes. Fable interacts with Webpack through the `fable-loader`. Configuration for Webpack is defined in the `webpack.config.js` file. Note this sample only includes basic Webpack configuration for development mode, if you want to see a more comprehensive configuration check the [Fable webpack-config-template](https://github.com/fable-compiler/webpack-config-template/blob/master/webpack.config.js).
+
+### F#
+
+The sample only contains two F# files: the project (.fsproj) and a source file (.fs) in the `src` folder.
+
+### Web assets
+
+The `index.html` file and other assets like an icon can be found in the `public` folder.
