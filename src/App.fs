@@ -8,14 +8,36 @@ https://martinand.net/2017/05/10/fablelous-enterprise-tic-tac-toe/
 module FablelousEnterpriseTicTacToe
 
 open Fable.Import.Browser
+open Microsoft.FSharp.Reflection
 
 module TicTacToeDomain =
 
-    type HorizPosition = Left | HCenter | Right
-    type VertPosition = Top | VCenter | Bottom
+    type HorizPosition = 
+        | Left 
+        | HCenter 
+        | Right
+
+        member x.GetName() = 
+            match FSharpValue.GetUnionFields(x, x.GetType()) with
+            | (case, _) -> case.Name 
+
+    type VertPosition = 
+        | Top 
+        | VCenter 
+        | Bottom
+
+        member x.GetName() = 
+            match FSharpValue.GetUnionFields(x, x.GetType()) with
+            | (case, _) -> case.Name 
+
     type CellPosition = HorizPosition * VertPosition 
 
-    type Player = PlayerO | PlayerX
+    type Player =
+        | PlayerO 
+        | PlayerX
+        member x.GetName() = 
+            match FSharpValue.GetUnionFields(x, x.GetType()) with
+            | (case, _) -> case.Name 
 
     type CellState = 
         | Played of Player 
@@ -253,14 +275,11 @@ module WebUi =
     open TicTacToeDomain
     open Microsoft.FSharp.Reflection
 
-    [<Fable.Core.PassGenericsAttribute>]
     let rec gameLoop api moveResult =
 
-        let getUnionCaseName (e:'a) = (FSharpValue.GetUnionFields(e, typeof<'a>) |> fst).Name
-
         let getIdByCellPosition cellPosition =
-            let horizPosition, vertPosition = cellPosition
-            getUnionCaseName(horizPosition) + getUnionCaseName(vertPosition)
+            let (horizPosition: HorizPosition), (vertPosition: VertPosition) = cellPosition
+            horizPosition.GetName() + vertPosition.GetName()
 
         let displayCells displayInfo = 
             let cells = displayInfo.cells
@@ -307,7 +326,7 @@ module WebUi =
             displayInfo |> displayCells
             removeListeners
         | GameWon (displayInfo, player) -> 
-            document.getElementById("GameStatus").innerText <- "Game Won by " + getUnionCaseName(player)
+            document.getElementById("GameStatus").innerText <- "Game Won by " + player.GetName()
             displayInfo |> displayCells
             removeListeners
         | PlayerOToMove (displayInfo, nextMoves) ->
