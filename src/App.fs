@@ -7,7 +7,7 @@ https://martinand.net/2017/05/10/fablelous-enterprise-tic-tac-toe/
 *)
 module FablelousEnterpriseTicTacToe
 
-open Fable.Import.Browser
+open Browser.Dom
 open Microsoft.FSharp.Reflection
 
 module TicTacToeDomain =
@@ -312,13 +312,13 @@ module WebUi =
 
         let removeListeners =
             let oldElement = document.getElementById("Board")
-            let newElement = oldElement.cloneNode(true) :?> HTMLDivElement
+            let newElement = oldElement.cloneNode(true) :?> Browser.Types.HTMLDivElement
             oldElement.parentNode.replaceChild(newElement, oldElement) |> ignore
 
         let addListener cellPosition nextMoves i =
             let id = getIdByCellPosition cellPosition
             let element = document.getElementById(id)
-            element.addEventListener_click(fun _ -> play (nextMoves, i); null)
+            element.onclick <- fun _ -> play( nextMoves, i)
 
         match moveResult with
         | GameTied displayInfo ->
@@ -350,7 +350,7 @@ module WebApplication =
         let api = TicTacToeImplementation.api
         WebUi.startGame api
 
-    let newGameButton = document.getElementById("NewGameButton") :?> HTMLButtonElement
-    newGameButton.addEventListener_click(fun _ -> newGameButtonClick(); null)   
+    let newGameButton = document.getElementById("NewGameButton") :?> Browser.Types.HTMLButtonElement
+    newGameButton.onclick <- fun _ -> newGameButtonClick()
 
 WebApplication.newGameButtonClick()
